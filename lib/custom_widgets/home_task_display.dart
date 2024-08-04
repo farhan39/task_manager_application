@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:task_quill/Models/task_info.dart';
 import 'package:task_quill/custom_widgets/checkbox.dart';
-import 'package:task_quill/custom_widgets/responsive_fontSize.dart';
 
 class HomeTaskDisplay extends StatefulWidget {
-  HomeTaskDisplay({Key? key, required this.title, required this.description, this.lineThrough = false});
+  const HomeTaskDisplay({
+    Key? key,
+    required this.task,
+    required this.onCheckboxChanged,
+    required this.onEditPressed,
+    required this.onDeletePressed,
+  }) : super(key: key);
 
-  final String title, description;
-  final bool? lineThrough;
-  //final BuildContext curr_context;
+  final Task task; // Use Task object instead of individual attributes
+  final ValueChanged<bool?> onCheckboxChanged;
+  final VoidCallback onEditPressed;
+  final VoidCallback onDeletePressed;
 
   @override
-  State<HomeTaskDisplay> createState() => _HomeTaskDisplay();
+  State<HomeTaskDisplay> createState() => _HomeTaskDisplayState();
 }
 
-class _HomeTaskDisplay extends State<HomeTaskDisplay> {
+class _HomeTaskDisplayState extends State<HomeTaskDisplay> {
   @override
   Widget build(BuildContext context) {
+
+    final bool isCompleted = widget.task.isCompleted == 1;
+
     return Container(
       margin: EdgeInsets.only(
         left: MediaQuery.of(context).size.width * 0.05,
@@ -31,51 +41,66 @@ class _HomeTaskDisplay extends State<HomeTaskDisplay> {
       ),
       child: Center(
         child: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.02),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CheckboxExample(scalingFactor: 1.4),
+              CheckboxExample(
+                scalingFactor: 1.4,
+                isChecked: isCompleted,
+                onChanged: isCompleted
+                    ? null // Disable checkbox interaction if completed
+                    : (value) {
+                  widget.onCheckboxChanged(value);
+                },
+              ),
               Padding(
                 padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                child: Flexible(
+
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ResponsiveText(
-                        text: widget.title,
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        lineThrough: widget.lineThrough,
+                      Text(
+                        widget.task.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          decoration: widget.task.isCompleted == 1
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
                       ),
-                      ResponsiveText(
-                        text: widget.description,
-                        fontSize: 18,
-                        color: Colors.black,
-                        lineThrough: widget.lineThrough,
+                      Text(
+                        widget.task.description,
+                        style: TextStyle(
+                          fontSize: 18,
+                          decoration: widget.task.isCompleted == 1
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
                       ),
                     ],
-                  ),
                 ),
               ),
               Spacer(),
-              Transform.scale(
-                scale: 1.3,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.edit_note_rounded),
-                  alignment: Alignment.topRight,
+              if (!isCompleted)
+                Transform.scale(
+                  scale: 1.3,
+                  child: IconButton(
+                    onPressed: widget.onEditPressed,
+                    icon: const Icon(Icons.edit_note_rounded),
+                    alignment: Alignment.topRight,
+                  ),
                 ),
-              ),
-              Transform.scale(
-                scale: 1.3,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  alignment: Alignment.topRight,
+                Transform.scale(
+                  scale: 1.3,
+                  child: IconButton(
+                    onPressed: widget.onDeletePressed,
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    alignment: Alignment.topRight,
+                  ),
                 ),
-              ),
             ],
           ),
         ),

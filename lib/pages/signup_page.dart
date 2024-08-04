@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_quill/database/task_quillDB.dart';
 import 'package:task_quill/custom_widgets/responsive_fontSize.dart';
 import 'package:task_quill/Models/user_info.dart';
+import 'package:task_quill/shared_pref_utility.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.db});
@@ -54,7 +55,8 @@ class _SignUpPageState extends State<SignUpPage> {
       }
 
       // Insert the user if email does not exist
-      await widget.db.insertUser(user);
+      int temp = await widget.db.insertUser(user);
+      user.setID(temp);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

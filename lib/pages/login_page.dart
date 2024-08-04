@@ -5,6 +5,7 @@ import 'package:task_quill/pages/home_page.dart';
 import 'package:task_quill/custom_widgets/responsive_fontSize.dart';
 import 'package:task_quill/pages/signup_page.dart';
 import 'package:task_quill/Models/user_info.dart';
+import 'package:task_quill/shared_pref_utility.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.db});
@@ -55,13 +56,15 @@ class _LoginPageState extends State<LoginPage> {
     final password = _passwordController.text;
 
     UserInfo? user = await widget.db.checkUser(email, password);
-
+    user.toString();
     if (user != null) {
+      SharedPreferencesUtil.saveUserId(user.getID());
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage(db: widget.db)),
       );
-    } else {
+    }
+    else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Login failed: Invalid email or password')),

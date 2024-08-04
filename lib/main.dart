@@ -1,47 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task_quill/pages/login_page.dart';
+import 'package:task_quill/pages/home_page.dart'; // Import your HomePage
 import 'package:task_quill/database/task_quillDB.dart';
+import 'package:task_quill/shared_pref_utility.dart';
+import 'package:sqflite/sqflite.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final TaskQuillDB db = TaskQuillDB();
-  runApp(MyApp(db: db));
+
+  //await TaskQuillDB.deleteDatabase1();
+
+  bool loginStatus = await SharedPreferencesUtil.loginStatus; // Fetch login status from SharedPreferences
+  runApp(MyApp(db: db, loginStatus: loginStatus));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.db});
+  MyApp({super.key, required this.db, required this.loginStatus});
 
   final TaskQuillDB db;
-  // This widget is the root of your application.
+  final bool loginStatus;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'TaskQuill',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        textTheme: GoogleFonts.openSansTextTheme(
+        textTheme: GoogleFonts.montserratTextTheme(
           Theme.of(context).textTheme,
         ),
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
-      home: LoginPage(db: db),
+      home: loginStatus ? HomePage(db: db) : LoginPage(db: db), // Redirect based on login status
     );
   }
 }

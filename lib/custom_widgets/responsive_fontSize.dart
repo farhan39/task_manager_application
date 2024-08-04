@@ -29,13 +29,14 @@ class ResponsiveText extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5), // Limit the width of the text
       child: Text(
         text,
-        maxLines: 4,
+        maxLines: 10,
         style: TextStyle(
           decoration: lineThrough ?? false ? TextDecoration.lineThrough : TextDecoration.none,
           color: color,
           fontSize: getResponsiveFontSize(context),
           fontWeight: fontWeight ?? FontWeight.normal,
           decorationThickness: lineThrough ?? false ? 3 : 1,
+          decorationColor: lineThrough ?? false ? Colors.black : null, // Set the color for the line-through
         ),
         textAlign: textAlign ?? TextAlign.start,
       ),
