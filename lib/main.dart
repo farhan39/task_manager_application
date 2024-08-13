@@ -12,7 +12,7 @@ void main() async {
 
   //await TaskQuillDB.deleteDatabase1();
 
-  bool loginStatus = await SharedPreferencesUtil.loginStatus; // Fetch login status from SharedPreferences
+  bool? loginStatus = await SharedPreferencesUtil.getLoginStatus(); // Fetch login status from SharedPreferences
   runApp(MyApp(db: db, loginStatus: loginStatus));
 }
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key, required this.db, required this.loginStatus});
 
   final TaskQuillDB db;
-  final bool loginStatus;
+  final bool? loginStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
-      home: loginStatus ? HomePage(db: db) : LoginPage(db: db), // Redirect based on login status
+      home: loginStatus! ? HomePage(db: db) : LoginPage(db: db), // Redirect based on login status
     );
   }
 }

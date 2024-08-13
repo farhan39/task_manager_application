@@ -12,5 +12,13 @@ class SharedPreferencesUtil {
     return prefs.getInt('userId');
   }
 
-  static bool loginStatus = false;
+  static Future<void> saveLoginStatus(bool loginStatus) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('loginStatus', loginStatus);
+  }
+
+  static Future<bool?> getLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('loginStatus');
+  }
 }

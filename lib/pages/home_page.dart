@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_quill/Models/task_info.dart';
 import 'package:task_quill/Models/user_info.dart';
 import 'package:task_quill/custom_widgets/home_task_display.dart';
+import 'package:task_quill/pages/login_page.dart';
 import 'package:task_quill/pages/user_profile.dart';
 import 'package:task_quill/custom_widgets/responsive_fontSize.dart';
 import 'package:task_quill/database/task_quillDB.dart';
@@ -328,31 +329,89 @@ class _HomePage extends State<HomePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: ResponsiveText(
-            text: 'TaskQuill',
-            fontSize: 20,
-            color: Colors.white,
-          ),
+          title: Text('TaskQuill'),
           toolbarHeight: 70,
           backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
           leading: IconButton(
-            icon: const Icon(Icons.timer, color: Colors.white),
+            icon: Icon(Icons.timer, color: Colors.white),
             onPressed: () {
               // Handle menu button press
             },
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.account_circle, color: Colors.white, size: 28),
-              highlightColor: Colors.orangeAccent,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return UserProfile(db:widget.db);
-                }));
-              },
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.account_circle, color: Colors.white, size: 28),
+                highlightColor: Colors.orangeAccent,
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              ),
             ),
           ],
         ),
+        endDrawer: Builder(
+          builder: (context) {
+            // Calculate the width of the drawer as 0.5 of screen width
+            final double drawerWidth = MediaQuery.of(context).size.width * 0.5;
+
+            return Container(
+              width: drawerWidth,
+              child: Drawer(
+                child: Column(
+                  children: [
+                    AppBar(
+                      title: Text('Profile Options'),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the drawer
+                          },
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.person),
+                              title: Text('Check Profile'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfile(db: widget.db),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            ListTile(
+                              leading: Icon(Icons.logout),
+                              title: Text('Logout'),
+                              onTap: () {
+                                SharedPreferencesUtil.saveLoginStatus(false);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoginPage(db: widget.db)),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+
         body: SafeArea(
           child: ListView.builder(
             itemCount: 1,

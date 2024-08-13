@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
     user.toString();
     if (user != null) {
       SharedPreferencesUtil.saveUserId(user.getID());
+      SharedPreferencesUtil.saveLoginStatus(true);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage(db: widget.db)),
