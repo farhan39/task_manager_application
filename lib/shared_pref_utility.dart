@@ -19,6 +19,6 @@ class SharedPreferencesUtil {
 
   static Future<bool?> getLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('loginStatus');
+    return prefs.getBool('loginStatus') ?? false;
   }
 }
